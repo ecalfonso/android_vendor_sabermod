@@ -26,6 +26,10 @@ ifneq ($(filter %mako,$(TARGET_PRODUCT)),)
   TARGET_DEVICE := mako
 endif
 
+ifneq ($(filter %jflte,$(TARGET_PRODUCT)),)
+  TARGET_DEVICE := jflte
+endif
+
 ifneq ($(filter %shamu,$(TARGET_PRODUCT)),)
   TARGET_DEVICE := shamu
 endif
