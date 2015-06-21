@@ -40,7 +40,8 @@ ifeq ($(strip $(HOST_OS)),linux)
     libncurses
 
   LOCAL_DISABLE_O3 := \
-    libminshacrypt   
+    libminshacrypt \
+    libFraunhoferAAC   
 endif
 
 # Extra SaberMod GCC C flags for arch target and Kernel
