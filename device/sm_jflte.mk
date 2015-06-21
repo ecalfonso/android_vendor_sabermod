@@ -37,7 +37,8 @@ ifeq ($(strip $(HOST_OS)),linux)
     -fopenmp
 
   LOCAL_DISABLE_GRAPHITE := \
-    libncurses
+    libncurses \
+    libFraunhoferAAC
 
   LOCAL_DISABLE_O3 := \
     libminshacrypt \
