@@ -37,12 +37,10 @@ ifeq ($(strip $(HOST_OS)),linux)
     -fopenmp
 
   LOCAL_DISABLE_GRAPHITE := \
-    libncurses \
-    libFraunhoferAAC
+    libncurses
 
   LOCAL_DISABLE_O3 := \
-    libminshacrypt \
-    libFraunhoferAAC   
+    libminshacrypt
 endif
 
 # Extra SaberMod GCC C flags for arch target and Kernel

@@ -597,7 +597,9 @@ EXTRA_SABERMOD_HOST_GCC := \
   -ftree-loop-im \
   -ftree-loop-ivcanon
 
-NO_OPTIMIZATIONS := $(LOCAL_BLUETOOTH_BLUEDROID)
+NO_OPTIMIZATIONS := \
+    $(LOCAL_BLUETOOTH_BLUEDROID) \
+    libFraunhoferAAC
 
 ifeq ($(strip $(ENABLE_SABERMOD_ARM_MODE)),true)
   # SABERMOD_ARM_MODE
