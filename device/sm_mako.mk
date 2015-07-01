@@ -25,19 +25,22 @@ ifeq ($(strip $(HOST_OS)),linux)
 
   # Sabermod configs
   TARGET_SM_KERNEL := 5.1
-  ENABLE_STRICT_ALIASING := true
+  MAKO_THREADS := 4
+  PRODUCT_THREADS := $(MAKO_THREADS)
+  LOCAL_STRICT_ALIASING := true
 export LOCAL_O3 := true
 
-GRAPHITE_KERNEL_FLAGS := \
-  -fopenmp
+  GRAPHITE_KERNEL_FLAGS := \
+    -floop-parallelize-all \
+    -ftree-parallelize-loops=$(PRODUCT_THREADS) \
+    -fopenmp
 endif
 
 # Extra SaberMod GCC C flags for arch target and Kernel
-export EXTRA_SABERMOD_GCC_VECTORIZE := \
-         -ftree-vectorize \
-         -mvectorize-with-neon-quad
+EXTRA_SABERMOD_GCC_VECTORIZE := \
+  -mvectorize-with-neon-quad
 
-ifeq ($(strip $(ENABLE_STRICT_ALIASING)),true)
+ifeq ($(strip $(LOCAL_STRICT_ALIASING)),true)
 
   # Enable strict-aliasing kernel flags
 export CONFIG_MACH_MSM8960_MAKO_STRICT_ALIASING := y

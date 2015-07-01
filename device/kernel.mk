@@ -8,7 +8,7 @@
 ifneq ($(filter %hammerhead,$(TARGET_PRODUCT)),)
   KERNEL_DIR := kernel/lge/hammerhead
   KERNEL_BINARY_IMAGE := zImage-dtb
-  ifneq ($(filter pa% slim% benzo%,$(TARGET_PRODUCT)),)
+  ifneq ($(filter pa% slim%,$(TARGET_PRODUCT)),)
     KERNEL_DEFCONFIG := sabermod_hammerhead_defconfig
   endif
 endif
@@ -16,7 +16,7 @@ endif
 ifneq ($(filter %mako,$(TARGET_PRODUCT)),)
   KERNEL_DIR := kernel/lge/mako
   KERNEL_BINARY_IMAGE := zImage
-  ifneq ($(filter pa% slim% %benzo,$(TARGET_PRODUCT)),)
+  ifneq ($(filter pa% slim%,$(TARGET_PRODUCT)),)
     KERNEL_DEFCONFIG := sabermod_mako_defconfig
   endif
 endif
@@ -24,8 +24,8 @@ endif
 ifneq ($(filter %shamu,$(TARGET_PRODUCT)),)
   KERNEL_DIR := kernel/moto/shamu
   KERNEL_BINARY_IMAGE := zImage-dtb
-  ifneq ($(filter benzo%,$(TARGET_PRODUCT)),)
-    KERNEL_DEFCONFIG := benzo_defconfig
+  ifneq ($(filter pa%,$(TARGET_PRODUCT)),)
+    KERNEL_DEFCONFIG := sabermod_shamu_defconfig
   endif
 endif
 
