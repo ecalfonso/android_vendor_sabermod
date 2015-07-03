@@ -28,7 +28,7 @@ ifeq ($(strip $(HOST_OS)),linux)
   TARGET_SM_KERNEL := 4.9
   JFLTE_THREADS := 4
   PRODUCT_THREADS := $(JFLTE_THREADS)
-  ENABLE_STRICT_ALIASING := false
+  LOCAL_STRICT_ALIASING := true
   export LOCAL_O3 := true
 
   GRAPHITE_KERNEL_FLAGS := \
@@ -49,12 +49,13 @@ export EXTRA_SABERMOD_GCC_VECTORIZE := \
          -ftree-vectorize \
          -mvectorize-with-neon-quad
 
-ifeq ($(strip $(ENABLE_STRICT_ALIASING)),true)
+ifeq ($(strip $(LOCAL_STRICT_ALIASING)),true)
 
-  # Enable strict-aliasing kernel flags
-  export CONFIG_MACH_MSM8960_JFLTE_STRICT_ALIASING := y
+  # Flag for strict-aliasing on jf kernel
+  # It doesn't work at all, or needs a lot of time to make it work
+  # export CONFIG_MACH_MSM8960_JFLTE_STRICT_ALIASING := y
 
-  # Check if something is already set in product/sm_products.mk
+  # Check if something is already set in configs/sm.mk
   ifndef LOCAL_DISABLE_STRICT_ALIASING
     LOCAL_DISABLE_STRICT_ALIASING := \
       libmmcamera_interface\
