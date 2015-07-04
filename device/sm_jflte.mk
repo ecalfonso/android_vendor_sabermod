@@ -55,14 +55,17 @@ ifeq ($(strip $(LOCAL_STRICT_ALIASING)),true)
   # It doesn't work at all, or needs a lot of time to make it work
   # export CONFIG_MACH_MSM8960_JFLTE_STRICT_ALIASING := y
 
+  DISABLE_STRICT := \
+    libmmcamera_interface\
+    camera.msm8960 \
+    gatt_testtool
+
   # Check if something is already set in configs/sm.mk
   ifndef LOCAL_DISABLE_STRICT_ALIASING
     LOCAL_DISABLE_STRICT_ALIASING := \
-      libmmcamera_interface\
-      camera.msm8960
+      $(DISABLE_STRICT)
   else
     LOCAL_DISABLE_STRICT_ALIASING += \
-      libmmcamera_interface\
-      camera.msm8960
+      $(DISABLE_STRICT)
   endif
 endif
