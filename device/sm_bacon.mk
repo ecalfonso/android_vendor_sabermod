@@ -28,7 +28,7 @@ ifeq ($(strip $(HOST_OS)),linux)
   TARGET_SM_AND := 4.9
   BACON_THREADS := 4
   PRODUCT_THREADS := $(BACON_THREADS)
-  LOCAL_STRICT_ALIASING := true
+  LOCAL_STRICT_ALIASING := false
   export LOCAL_O3 := true
 
   GRAPHITE_KERNEL_FLAGS := \
