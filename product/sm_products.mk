@@ -55,6 +55,8 @@ endif
 ifneq ($(filter pa%,$(TARGET_PRODUCT)),)
 PRODUCT_PACKAGES += \
   busybox
+
+NO_OTA_BUILD := true
 endif
 
 # General ROM strings

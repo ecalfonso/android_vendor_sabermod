@@ -29,10 +29,12 @@ ifeq ($(strip $(HOST_OS)),linux)
   LOCAL_STRICT_ALIASING := true
 export LOCAL_O3 := true
 
-  GRAPHITE_KERNEL_FLAGS := \
-    -floop-parallelize-all \
-    -ftree-parallelize-loops=$(PRODUCT_THREADS) \
-    -fopenmp
+  ifneq ($(filter 5.1 6.0,$(TARGET_SM_KERNEL)),)
+    GRAPHITE_KERNEL_FLAGS := \
+      -floop-parallelize-all \
+      -ftree-parallelize-loops=$(PRODUCT_THREADS) \
+      -fopenmp
+  endif
 endif
 
 # Extra SaberMod GCC C flags for arch target and Kernel
