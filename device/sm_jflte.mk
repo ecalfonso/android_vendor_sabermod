@@ -32,8 +32,6 @@ ifeq ($(strip $(HOST_OS)),linux)
   export LOCAL_O3 := true
 
   GRAPHITE_KERNEL_FLAGS := \
-    -floop-parallelize-all \
-    -ftree-parallelize-loops=$(PRODUCT_THREADS) \
     -fopenmp
 
   LOCAL_DISABLE_GRAPHITE := \
