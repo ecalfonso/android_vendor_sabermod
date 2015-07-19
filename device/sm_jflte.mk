@@ -28,7 +28,7 @@ ifeq ($(strip $(HOST_OS)),linux)
   TARGET_SM_KERNEL := 4.9
   JFLTE_THREADS := 4
   PRODUCT_THREADS := $(JFLTE_THREADS)
-  LOCAL_STRICT_ALIASING := true
+  LOCAL_STRICT_ALIASING := false
   export LOCAL_O3 := true
 
   GRAPHITE_KERNEL_FLAGS := \
