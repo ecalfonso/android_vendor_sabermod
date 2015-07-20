@@ -30,9 +30,11 @@ ifeq ($(strip $(HOST_OS)),linux)
   PRODUCT_THREADS := $(JFLTE_THREADS)
   LOCAL_STRICT_ALIASING := false
   export LOCAL_O3 := true
-
-  GRAPHITE_KERNEL_FLAGS := \
-    -fopenmp
+  
+  ifneq ($(filter 5.1 6.0,$(TARGET_SM_KERNEL)),)
+    GRAPHITE_KERNEL_FLAGS := \
+      -fopenmp
+  endif
 
   LOCAL_DISABLE_GRAPHITE := \
     libncurses
