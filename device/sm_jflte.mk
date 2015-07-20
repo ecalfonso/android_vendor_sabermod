@@ -32,6 +32,7 @@ ifeq ($(strip $(HOST_OS)),linux)
   export LOCAL_O3 := true
 
   GRAPHITE_KERNEL_FLAGS := \
+    -fopenmp
 
   LOCAL_DISABLE_GRAPHITE := \
     libncurses
