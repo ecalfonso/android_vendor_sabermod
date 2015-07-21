@@ -25,7 +25,7 @@ ifeq ($(strip $(HOST_OS)),linux)
 
   # Sabermod configs
   TARGET_SM_AND := 4.8
-  TARGET_SM_KERNEL := 4.9
+  TARGET_SM_KERNEL := 5.2
   JFLTE_THREADS := 4
   PRODUCT_THREADS := $(JFLTE_THREADS)
   LOCAL_STRICT_ALIASING := false
