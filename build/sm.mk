@@ -82,7 +82,7 @@ ifdef MAYBE_UNINITIALIZED
   endif
 endif
 
-ifneq ($(filter 5.1% 6.0%,$(SM_AND_NAME)),)
+ifneq ($(filter 5.1% 5.2% 6.0%,$(SM_AND_NAME)),)
   ifdef WARN_NO_ERROR
     ifeq (1,$(words $(filter $(WARN_NO_ERROR),$(LOCAL_MODULE))))
       ifdef LOCAL_CFLAGS
@@ -94,7 +94,7 @@ ifneq ($(filter 5.1% 6.0%,$(SM_AND_NAME)),)
   endif
 endif
 
-ifneq ($(filter 5.1% 6.0%,$(SM_AND_NAME)),)
+ifneq ($(filter 5.1% 5.2% 6.0%,$(SM_AND_NAME)),)
   ifeq ($(strip $(LOCAL_IS_HOST_MODULE)),true)
     ifeq (1,$(words $(filter libcutils, $(LOCAL_MODULE))))
       ifdef LOCAL_CFLAGS
