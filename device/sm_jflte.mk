@@ -13,8 +13,6 @@
 # limitations under the License.
 #
 
-$(warning JFLTE.mk applied)
-
 # Find host os
 UNAME := $(shell uname -s)
 
@@ -39,9 +37,6 @@ ifeq ($(strip $(HOST_OS)),linux)
   endif
 
   ifeq (4.8, $(TARGET_SM_AND),)
-    
-    $(warning jflte GCC 4.8 fixes applied)
-
     LOCAL_DISABLE_GRAPHITE := \
       libncurses
 

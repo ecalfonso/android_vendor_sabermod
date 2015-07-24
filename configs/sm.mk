@@ -606,8 +606,6 @@ export EXTRA_SABERMOD_GCC_VECTORIZE := \
          -ftree-vectorize
 endif
 
-$(warning Applied configs/sm.mk)
-
 ifndef NO_OPTIMIZATIONS
   NO_OPTIMIZATIONS := \
     $(LOCAL_BLUETOOTH_BLUEDROID)
