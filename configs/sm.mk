@@ -606,9 +606,15 @@ export EXTRA_SABERMOD_GCC_VECTORIZE := \
          -ftree-vectorize
 endif
 
-NO_OPTIMIZATIONS := \
-    $(LOCAL_BLUETOOTH_BLUEDROID) \
-    libFraunhoferAAC
+$(warning Applied configs/sm.mk)
+
+ifndef NO_OPTIMIZATIONS
+  NO_OPTIMIZATIONS := \
+    $(LOCAL_BLUETOOTH_BLUEDROID)
+else
+  NO_OPTIMIZATIONS += \
+    $(LOCAL_BLUETOOTH_BLUEDROID)
+endif
 
 ifeq ($(strip $(ENABLE_SABERMOD_ARM_MODE)),true)
   # SABERMOD_ARM_MODE
