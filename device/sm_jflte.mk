@@ -28,7 +28,7 @@ ifeq ($(strip $(HOST_OS)),linux)
   TARGET_SM_KERNEL := 5.2
   JFLTE_THREADS := 4
   PRODUCT_THREADS := $(JFLTE_THREADS)
-  LOCAL_STRICT_ALIASING := false
+  LOCAL_STRICT_ALIASING := true
   export LOCAL_O3 := true
   
   ifneq ($(filter 5.1 5.2 6.0,$(TARGET_SM_KERNEL)),)
