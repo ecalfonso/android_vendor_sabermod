@@ -36,8 +36,8 @@ ifeq ($(strip $(HOST_OS)),linux)
     GRAPHITE_KERNEL_FLAGS := \
       -fopenmp
   else
-  	GRAPHITE_KERNEL_FLAGS := \
-  		-fno-graphite \
+    GRAPHITE_KERNEL_FLAGS := \
+      -fno-graphite \
       -fno-graphite-identity \
       -fno-loop-flatten \
       -fno-tree-loop-linear \
@@ -48,10 +48,12 @@ ifeq ($(strip $(HOST_OS)),linux)
       -fno-loop-unroll-and-jam
   endif
 
-  ifeq (4.8, $(TARGET_SM_AND),)
+  ifeq (true, $(LOCAL_STRICT_ALIASING))
     LOCAL_DISABLE_GRAPHITE := \
       libncurses
+  endif
 
+  ifeq (4.8, $(TARGET_SM_AND),)
     LOCAL_DISABLE_O3 := \
       libminshacrypt \
       libFraunhoferAAC
