@@ -76,7 +76,8 @@ ifeq ($(strip $(LOCAL_STRICT_ALIASING)),true)
   DISABLE_STRICT := \
     libmmcamera_interface\
     camera.msm8960 \
-    gatt_testtool
+    gatt_testtool \
+    SamsungDoze
 
   # Check if something is already set in configs/sm.mk
   ifndef LOCAL_DISABLE_STRICT_ALIASING
