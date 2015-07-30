@@ -32,20 +32,8 @@ ifeq ($(strip $(HOST_OS)),linux)
   export LOCAL_O3 := true
   
   ifneq ($(filter 5.1 5.2 6.0,$(TARGET_SM_KERNEL)),)
-  	# If not 5.1/5.2/6.0
     GRAPHITE_KERNEL_FLAGS := \
       -fopenmp
-  else
-    GRAPHITE_KERNEL_FLAGS := \
-      -fno-graphite \
-      -fno-graphite-identity \
-      -fno-loop-flatten \
-      -fno-tree-loop-linear \
-      -fno-loop-interchange \
-      -fno-loop-strip-mine \
-      -fno-loop-block \
-      -fno-loop-nest-optimize \
-      -fno-loop-unroll-and-jam
   endif
 
   ifeq (true, $(LOCAL_STRICT_ALIASING))
