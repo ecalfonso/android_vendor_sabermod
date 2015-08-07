@@ -53,7 +53,6 @@ endif
 
 # Extra SaberMod GCC C flags for arch target and Kernel
 export EXTRA_SABERMOD_GCC_VECTORIZE := \
-         -ftree-vectorize \
          -mvectorize-with-neon-quad
 
 ifeq ($(strip $(LOCAL_STRICT_ALIASING)),true)
