@@ -31,7 +31,7 @@ ifeq ($(strip $(HOST_OS)),linux)
   LOCAL_STRICT_ALIASING := true
   export LOCAL_O3 := true
   
-  ifneq ($(filter 5.1 5.2 6.0,$(TARGET_SM_KERNEL)),)
+  ifneq ($(filter 5.1 6.0,$(TARGET_SM_KERNEL)),)
     GRAPHITE_KERNEL_FLAGS := \
       -fopenmp
   endif
@@ -53,6 +53,7 @@ endif
 
 # Extra SaberMod GCC C flags for arch target and Kernel
 export EXTRA_SABERMOD_GCC_VECTORIZE := \
+         -ftree-vectorize \
          -mvectorize-with-neon-quad
 
 ifeq ($(strip $(LOCAL_STRICT_ALIASING)),true)
