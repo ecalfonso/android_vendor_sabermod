@@ -51,7 +51,7 @@ ifeq ($(strip $(LOCAL_STRICT_ALIASING)),true)
   # Disable lists for GCC4.8/4.9
   ifeq ($(strip $(TARGET_SM_AND)),4.8)
     DISABLE_STRICT := \
-
+      gatt_testtool
   endif
 
   ifeq ($(strip $(TARGET_SM_AND)),4.9)
