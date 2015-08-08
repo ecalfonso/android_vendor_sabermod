@@ -13,42 +13,30 @@
 # limitations under the License.
 #
 
-# Find host os
-UNAME := $(shell uname -s)
+# Device specific Sabermod configs
+TARGET_SM_AND := 4.8
+TARGET_SM_KERNEL := 5.2
+JFLTE_THREADS := 4
+PRODUCT_THREADS := $(JFLTE_THREADS)
+LOCAL_STRICT_ALIASING := true
+export LOCAL_O3 := true
 
-ifeq ($(strip $(UNAME)),Linux)
-  HOST_OS := linux
+# Configs for ROM on GCC 4.8
+ifeq ($(strip $(TARGET_SM_AND)),4.8)
+  $(warning Applied GCC4.8 ROM configs)
+
 endif
 
-# Only use these compilers on linux host.
-ifeq ($(strip $(HOST_OS)),linux)
+# Configs for ROM on GCC 4.9
+ifeq ($(strip $(TARGET_SM_AND)),4.9)
+  $(warning Applied GCC4.9 ROM configs)
 
-  # Sabermod configs
-  TARGET_SM_AND := 4.8
-  TARGET_SM_KERNEL := 5.2
-  JFLTE_THREADS := 4
-  PRODUCT_THREADS := $(JFLTE_THREADS)
-  LOCAL_STRICT_ALIASING := true
-  export LOCAL_O3 := true
-  
-  ifneq ($(filter 5.1 6.0,$(TARGET_SM_KERNEL)),)
-    GRAPHITE_KERNEL_FLAGS := \
-      -fopenmp
-  endif
+endif
 
-  ifeq (true, $(LOCAL_STRICT_ALIASING))
-    LOCAL_DISABLE_GRAPHITE := \
-      libncurses
-  endif
-
-  ifeq (4.8, $(TARGET_SM_AND),)
-    LOCAL_DISABLE_O3 := \
-      libminshacrypt \
-      libFraunhoferAAC
-
-    NO_OPTIMIZATIONS := \
-      libFraunhoferAAC
-  endif
+ifneq ($(filter 5.1 5.2 6.0,$(TARGET_SM_KERNEL)),)
+  $(warning Applied GCC5.1/6.0 Kernel configs)
+  GRAPHITE_KERNEL_FLAGS := \
+    -fopenmp
 endif
 
 # Extra SaberMod GCC C flags for arch target and Kernel
@@ -56,16 +44,18 @@ export EXTRA_SABERMOD_GCC_VECTORIZE := \
          -mvectorize-with-neon-quad
 
 ifeq ($(strip $(LOCAL_STRICT_ALIASING)),true)
+  $(warning Applied Strict configs)
 
-  # Flag for strict-aliasing on jf kernel
-  # It doesn't work at all, or needs a lot of time to make it work
-  # export CONFIG_MACH_MSM8960_JFLTE_STRICT_ALIASING := y
+  # Disable lists for GCC4.8/4.9
+  ifeq ($(strip $(TARGET_SM_AND)),4.8)
+    DISABLE_STRICT := \
 
-  DISABLE_STRICT := \
-    libmmcamera_interface\
-    camera.msm8960 \
-    gatt_testtool \
-    SamsungDoze
+  endif
+
+  ifeq ($(strip $(TARGET_SM_AND)),4.9)
+    DISABLE_STRICT := \
+
+  endif
 
   # Check if something is already set in configs/sm.mk
   ifndef LOCAL_DISABLE_STRICT_ALIASING
