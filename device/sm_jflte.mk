@@ -31,7 +31,7 @@ ifeq ($(strip $(TARGET_SM_AND)),4.8)
     libminshacrypt \
     libFraunhoferAAC
 
-  NO_OPTIMIZATION := \
+  NO_OPTIMIZATIONS := \
     libFraunhoferAAC
 endif
 
