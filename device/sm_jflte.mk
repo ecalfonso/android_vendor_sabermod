@@ -38,6 +38,8 @@ endif
 ifneq ($(filter 5.1 5.2 6.0,$(TARGET_SM_KERNEL)),)
   $(warning Applied GCC5.1/6.0 Kernel configs)
   GRAPHITE_KERNEL_FLAGS := \
+    -floop-parallelize-all \
+    -ftree-parallelize-loops=$(PRODUCT_THREADS) \
     -fopenmp
 endif
 
