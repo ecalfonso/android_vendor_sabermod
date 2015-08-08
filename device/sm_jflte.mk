@@ -28,7 +28,11 @@ ifeq ($(strip $(TARGET_SM_AND)),4.8)
     libncurses
 
   LOCAL_DISABLE_O3 := \
-    libminshacrypt
+    libminshacrypt \
+    libFraunhoferAAC
+
+  NO_OPTIMIZATION := \
+    libFraunhoferAAC
 endif
 
 # Configs for ROM on GCC 4.9
