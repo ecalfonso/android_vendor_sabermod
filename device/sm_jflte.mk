@@ -24,6 +24,8 @@ export LOCAL_O3 := true
 # Configs for ROM on GCC 4.8
 ifeq ($(strip $(TARGET_SM_AND)),4.8)
   $(warning Applied GCC4.8 ROM configs)
+  LOCAL_DISABLE_GRAPHITE := \
+    libncurses
 
   LOCAL_DISABLE_O3 := \
     libminshacrypt
