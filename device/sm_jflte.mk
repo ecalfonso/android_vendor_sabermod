@@ -62,7 +62,7 @@ ifeq ($(strip $(LOCAL_STRICT_ALIASING)),true)
 
   ifeq ($(strip $(TARGET_SM_AND)),4.9)
     DISABLE_STRICT := \
-
+      gatt_testtool
   endif
 
   # Check if something is already set in configs/sm.mk
