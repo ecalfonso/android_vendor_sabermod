@@ -14,7 +14,7 @@
 #
 
 # Device specific Sabermod configs
-TARGET_SM_AND := 4.9
+TARGET_SM_AND := 4.8
 TARGET_SM_KERNEL := 5.2
 JFLTE_THREADS := 4
 PRODUCT_THREADS := $(JFLTE_THREADS)
