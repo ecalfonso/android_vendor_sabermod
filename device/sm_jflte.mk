@@ -23,7 +23,6 @@ export LOCAL_O3 := true
 
 # Configs for ROM on GCC 4.8
 ifeq ($(strip $(TARGET_SM_AND)),4.8)
-  $(warning Applied GCC4.8 ROM configs)
   LOCAL_DISABLE_O3 := \
     libminshacrypt \
     libFraunhoferAAC
@@ -34,12 +33,10 @@ endif
 
 # Configs for ROM on GCC 4.9
 ifeq ($(strip $(TARGET_SM_AND)),4.9)
-  $(warning Applied GCC4.9 ROM configs)
 
 endif
 
 ifneq ($(filter 5.1 5.2 6.0,$(TARGET_SM_KERNEL)),)
-  $(warning Applied GCC5.1/6.0 Kernel configs)
   GRAPHITE_KERNEL_FLAGS := \
     -fopenmp
 endif
@@ -49,7 +46,6 @@ export EXTRA_SABERMOD_GCC_VECTORIZE := \
          -mvectorize-with-neon-quad
 
 ifeq ($(strip $(LOCAL_STRICT_ALIASING)),true)
-  $(warning Applied Strict configs)
 
   # Disable lists for GCC4.8/4.9
   ifeq ($(strip $(TARGET_SM_AND)),4.8)
