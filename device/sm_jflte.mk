@@ -20,6 +20,7 @@ JFLTE_THREADS := 4
 PRODUCT_THREADS := $(JFLTE_THREADS)
 LOCAL_STRICT_ALIASING := false
 export LOCAL_O3 := true
+PREBUILT_FIREFOX := false
 
 # Configs for ROM on GCC 4.8
 ifeq ($(strip $(TARGET_SM_AND)),4.8)
