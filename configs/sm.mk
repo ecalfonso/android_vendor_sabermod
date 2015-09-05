@@ -572,8 +572,7 @@ ifeq ($(strip $(LOCAL_O3)),true)
     -Wno-error=array-bounds \
     -Wno-error=strict-overflow \
     -fwrapv \
-    -funroll-loops \
-    -mvectorize-with-neon-quad
+    -funroll-loops
 else
     OPT2:=
 endif
