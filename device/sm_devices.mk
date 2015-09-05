@@ -32,7 +32,7 @@ endif
 
 ifneq ($(filter jflte,$(TARGET_DEVICE)),)
   include $(SM_VENDOR)/device/sm_jflte.mk
-  ENABLE_GCC_DEFAULTS := true
+  ENABLE_GCC_DEFAULTS := false
   LOCAL_ARCH := arm
 endif
 
