@@ -13,28 +13,18 @@
 # limitations under the License.
 #
 
-# Find host os
-UNAME := $(shell uname -s)
-
-ifeq ($(strip $(UNAME)),Linux)
-  HOST_OS := linux
-endif
-
-# Only use these compilers on linux host.
-ifeq ($(strip $(HOST_OS)),linux)
-
-  # Sabermod configs
-  MAKO_THREADS := 4
-  PRODUCT_THREADS := $(MAKO_THREADS)
-  LOCAL_STRICT_ALIASING := true
+# Sabermod configs
+TARGET_SM_KERNEL := 4.8
+MAKO_THREADS := 4
+PRODUCT_THREADS := $(MAKO_THREADS)
+LOCAL_STRICT_ALIASING := true
 export LOCAL_O3 := true
 
-  ifneq ($(filter 5.1 6.0,$(TARGET_SM_KERNEL)),)
-    GRAPHITE_KERNEL_FLAGS := \
-      -floop-parallelize-all \
-      -ftree-parallelize-loops=$(PRODUCT_THREADS) \
-      -fopenmp
-  endif
+ifneq ($(filter 5.1 5.2 6.0,$(TARGET_SM_KERNEL)),)
+  GRAPHITE_KERNEL_FLAGS := \
+    -floop-parallelize-all \
+    -ftree-parallelize-loops=$(PRODUCT_THREADS) \
+    -fopenmp
 endif
 
 # Extra SaberMod GCC C flags for arch target and Kernel

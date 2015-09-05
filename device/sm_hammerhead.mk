@@ -13,32 +13,21 @@
 # limitations under the License.
 #
 
-# Find host os
-UNAME := $(shell uname -s)
-
-ifeq ($(strip $(UNAME)),Linux)
-  HOST_OS := linux
-endif
-
-# Only use these compilers on linux host.
-ifeq ($(strip $(HOST_OS)),linux)
-
-  # Sabermod configs
-  TARGET_SM_KERNEL := 5.2
-  HAMMERHEAD_THREADS := 4
-  PRODUCT_THREADS := $(HAMMERHEAD_THREADS)
-  LOCAL_STRICT_ALIASING := true
+# Sabermod configs
+TARGET_SM_KERNEL := 4.9
+HAMMERHEAD_THREADS := 4
+PRODUCT_THREADS := $(HAMMERHEAD_THREADS)
+LOCAL_STRICT_ALIASING := true
 export LOCAL_O3 := true
 
-  GRAPHITE_KERNEL_FLAGS := \
-    -floop-parallelize-all \
-    -ftree-parallelize-loops=$(PRODUCT_THREADS) \
-    -fopenmp
+GRAPHITE_KERNEL_FLAGS := \
+  -floop-parallelize-all \
+  -ftree-parallelize-loops=$(PRODUCT_THREADS) \
+  -fopenmp
 
-  ifneq ($(filter 5% 6%,$(TARGET_SM_AND)),)
-    LOCAL_DISABLE_GRAPHITE := \
-      camera.hammerhead
-  endif
+ifneq ($(filter 5% 6%,$(TARGET_SM_AND)),)
+  LOCAL_DISABLE_GRAPHITE := \
+    camera.hammerhead
 endif
 
 # General flags for gcc 4.9 to allow compilation to complete.

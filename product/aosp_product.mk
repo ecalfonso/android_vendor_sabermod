@@ -16,3 +16,10 @@
 # Android ROM toolchain.
 # This can still be overridden in device/sm_device.mk
 TARGET_SM_AND := 4.9
+
+# Assume that busybox is bundled in with all customized ROMs.
+# If need be, there is a fork of cyanogenmod busybox on gitlab, that will work on any ROM build type.
+# See https://gitlab.com/SaberMod/android-external-busybox
+
+PRODUCT_PACKAGES += \
+  busybox

@@ -42,13 +42,6 @@ endif
 # Set GCC colors
 export GCC_COLORS := 'error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
-# Find host os
-UNAME := $(shell uname -s)
-
-ifeq ($(strip $(UNAME)),Linux)
-  HOST_OS := linux
-endif
-
 ifndef LOCAL_ARCH
   $(warning =====================================================================)
   $(warning Can not determine arch type, defaulting to arm)
@@ -87,350 +80,347 @@ endif
 # Turn debugging off for all builds.
 FORCE_DISABLE_DEBUGGING := true
 
-# Only use these compilers on linux host and arm targets.
+ifneq ($(filter arm arm64,$(LOCAL_ARCH)),)
+  ifeq ($(strip $(LOCAL_ARCH)),arm)
 
-ifeq ($(strip $(HOST_OS)),linux)
-  ifneq ($(filter arm arm64,$(LOCAL_ARCH)),)
-    ifeq ($(strip $(LOCAL_ARCH)),arm)
+export TARGET_ARCH_LIB_PATH := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-$(HOST_OS)-androideabi-$(TARGET_SM_AND)/lib:$(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-eabi-$(TARGET_SM_KERNEL)/lib
 
-export TARGET_ARCH_LIB_PATH := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-linux-androideabi-$(TARGET_SM_AND)/lib:$(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-eabi-$(TARGET_SM_KERNEL)/lib
+    # Path to ROM toolchain
+    SM_AND_PATH := prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-$(HOST_OS)-androideabi-$(TARGET_SM_AND)
+    SM_AND := $(shell $(SM_AND_PATH)/bin/arm-$(HOST_OS)-androideabi-gcc --version)
 
-      # Path to ROM toolchain
-      SM_AND_PATH := prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-linux-androideabi-$(TARGET_SM_AND)
-      SM_AND := $(shell $(SM_AND_PATH)/bin/arm-linux-androideabi-gcc --version)
+    # Find strings in version info
+    ifneq ($(filter %sabermod,$(SM_AND)),)
+      SM_AND_NAME := $(filter %sabermod,$(SM_AND))
+      SM_AND_DATE := $(filter 20140% 20141% 20150% 20151%,$(SM_AND))
+      SM_AND_STATUS := $(filter (release) (prerelease) (experimental),$(SM_AND))
+      SM_AND_VERSION := $(SM_AND_NAME)-$(SM_AND_DATE)-$(SM_AND_STATUS)
 
-      # Find strings in version info
-      ifneq ($(filter %sabermod,$(SM_AND)),)
-        SM_AND_NAME := $(filter %sabermod,$(SM_AND))
-        SM_AND_DATE := $(filter 20140% 20141% 20150% 20151%,$(SM_AND))
-        SM_AND_STATUS := $(filter (release) (prerelease) (experimental),$(SM_AND))
-        SM_AND_VERSION := $(SM_AND_NAME)-$(SM_AND_DATE)-$(SM_AND_STATUS)
-
-        # Write version info to build.prop
-        PRODUCT_PROPERTY_OVERRIDES += \
-          ro.sm.android=$(SM_AND_VERSION)
+      # Write version info to build.prop
+      PRODUCT_PROPERTY_OVERRIDES += \
+        ro.sm.android=$(SM_AND_VERSION)
 
         
-        # Graphite ROM flags
-        OPT1 := [graphite]
+      # Graphite ROM flags
+      OPT1 := [graphite]
 
-        # Some graphite flags are only available for certain gcc versions
- export GRAPHITE_UNROLL_AND_JAM_AND := $(filter 5.1% 6.0%,$(SM_AND_NAME))
+      # Some graphite flags are only available for certain gcc versions
+export GRAPHITE_UNROLL_AND_JAM_AND := $(filter 5.1% 5.2% 6.0%,$(SM_AND_NAME))
 
-        # Graphite flags and friends
-        BASE_GRAPHITE_FLAGS := \
-          -fgraphite \
-          -fgraphite-identity \
-          -floop-flatten \
-          -ftree-loop-linear \
-          -floop-interchange \
-          -floop-strip-mine \
-          -floop-block
-        ifneq ($(GRAPHITE_UNROLL_AND_JAM_AND),)
-          BASE_GRAPHITE_FLAGS += \
-            -floop-unroll-and-jam
-        endif
-
-        # Check if there's already something set somewhere.
-        ifndef GRAPHITE_FLAGS
-          GRAPHITE_FLAGS := \
-            $(BASE_GRAPHITE_FLAGS)
-        else
-          GRAPHITE_FLAGS += \
-            $(BASE_GRAPHITE_FLAGS)
-        endif
-
-        # Legacy gcc doesn't understand this flag
-        ifneq ($(strip $(USE_LEGACY_GCC)),true)
-          GRAPHITE_FLAGS += \
-            -Wno-error=maybe-uninitialized
-        endif
+      # Graphite flags and friends
+      BASE_GRAPHITE_FLAGS := \
+        -fgraphite \
+        -fgraphite-identity \
+        -floop-flatten \
+        -ftree-loop-linear \
+        -floop-interchange \
+        -floop-strip-mine \
+        -floop-block
+      ifneq ($(GRAPHITE_UNROLL_AND_JAM_AND),)
+        BASE_GRAPHITE_FLAGS += \
+          -floop-unroll-and-jam
       endif
 
-      # Path to kernel toolchain
-      SM_KERNEL_PATH := prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-eabi-$(TARGET_SM_KERNEL)
-      SM_KERNEL := $(shell $(SM_KERNEL_PATH)/bin/arm-eabi-gcc --version)
+      # Check if there's already something set somewhere.
+      ifndef GRAPHITE_FLAGS
+        GRAPHITE_FLAGS := \
+          $(BASE_GRAPHITE_FLAGS)
+      else
+        GRAPHITE_FLAGS += \
+          $(BASE_GRAPHITE_FLAGS)
+      endif
 
-      ifneq ($(filter %sabermod,$(SM_KERNEL)),)
- export SM_KERNEL_NAME := $(filter %sabermod,$(SM_KERNEL))
-        SM_KERNEL_DATE := $(filter 20140% 20141% 20150% 20151%,$(SM_KERNEL))
-        SM_KERNEL_STATUS := $(filter (release) (prerelease) (experimental),$(SM_KERNEL))
-        SM_KERNEL_VERSION := $(SM_KERNEL_NAME)-$(SM_KERNEL_DATE)-$(SM_KERNEL_STATUS)
-
-        # Graphite flags for kernel
-
-        # Some graphite flags are only available for certain gcc versions
- export GRAPHITE_UNROLL_AND_JAM_KERNEL := $(filter 5.1% 6.0%,$(SM_KERNEL_NAME))
-
-        BASE_GRAPHITE_KERNEL_FLAGS := \
-          -fgraphite \
-          -fgraphite-identity \
-          -floop-flatten \
-          -ftree-loop-linear \
-          -floop-interchange \
-          -floop-strip-mine \
-          -floop-block \
-          -floop-nest-optimize
-        ifneq ($(GRAPHITE_UNROLL_AND_JAM_KERNEL),)
-          BASE_GRAPHITE_KERNEL_FLAGS += \
-            -floop-unroll-and-jam
-        endif
-
-        # Check if there's already something set somewhere.
-        ifndef GRAPHITE_KERNEL_FLAGS
-   export GRAPHITE_KERNEL_FLAGS := \
-            $(BASE_GRAPHITE_KERNEL_FLAGS)
-        else
-   export GRAPHITE_KERNEL_FLAGS := \
-            $(BASE_GRAPHITE_KERNEL_FLAGS) \
-            $(GRAPHITE_KERNEL_FLAGS)
-        endif
-
-        ifneq ($(filter 5.1% 6.0%,$(SM_KERNEL_NAME)),)
-          # Flags to disable graphite in the kernel for gcc 5/6
-   export LOCAL_DISABLE_KERNEL_GRAPHITE := \
-            -fno-graphite \
-            -fno-graphite-identity \
-            -fno-loop-flatten \
-            -fno-tree-loop-linear \
-            -fno-loop-interchange \
-            -fno-loop-strip-mine \
-            -fno-loop-block \
-            -fno-loop-nest-optimize \
-            -fno-loop-unroll-and-jam \
-            -fno-loop-parallelize-all \
-            -ftree-parallelize-loops=0 \
-            -fno-openmp
-        endif
-
-        ifeq ($(strip $(LOCAL_STRICT_ALIASING)),true)
-
-          # strict-aliasing kernel flags
-   export KERNEL_STRICT_FLAGS := \
-            -fstrict-aliasing \
-            -Werror=strict-aliasing
-        endif
+      # Legacy gcc doesn't understand this flag
+      ifneq ($(strip $(USE_LEGACY_GCC)),true)
+        GRAPHITE_FLAGS += \
+          -Wno-error=maybe-uninitialized
       endif
     endif
 
-    ifeq ($(strip $(LOCAL_ARCH)),arm64)
+    # Path to kernel toolchain
+    SM_KERNEL_PATH := prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-eabi-$(TARGET_SM_KERNEL)
+    SM_KERNEL := $(shell $(SM_KERNEL_PATH)/bin/arm-eabi-gcc --version)
 
-export TARGET_ARCH_LIB_PATH := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/aarch64/aarch64-linux-android-$(TARGET_SM_AND)/lib:$(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/aarch64/aarch64-$(TARGET_SM_KERNEL)/lib
+    ifneq ($(filter %sabermod,$(SM_KERNEL)),)
+export SM_KERNEL_NAME := $(filter %sabermod,$(SM_KERNEL))
+      SM_KERNEL_DATE := $(filter 20140% 20141% 20150% 20151%,$(SM_KERNEL))
+      SM_KERNEL_STATUS := $(filter (release) (prerelease) (experimental),$(SM_KERNEL))
+      SM_KERNEL_VERSION := $(SM_KERNEL_NAME)-$(SM_KERNEL_DATE)-$(SM_KERNEL_STATUS)
 
-      # Path to toolchain
-      SM_AND_PATH := prebuilts/gcc/$(HOST_PREBUILT_TAG)/aarch64/aarch64-linux-android-$(TARGET_SM_AND)
-      SM_AND := $(shell $(SM_AND_PATH)/bin/aarch64-linux-android-gcc --version)
+      # Graphite flags for kernel
 
-      # Find strings in version info
-      ifneq ($(filter %sabermod,$(SM_AND)),)
-        SM_AND_NAME := $(filter %sabermod,$(SM_AND))
-        SM_AND_DATE := $(filter 20140% 20141% 20150% 20151%,$(SM_AND))
-        SM_AND_STATUS := $(filter (release) (prerelease) (experimental),$(SM_AND))
-        SM_AND_VERSION := $(SM_AND_NAME)-$(SM_AND_DATE)-$(SM_AND_STATUS)
+      # Some graphite flags are only available for certain gcc versions
+export GRAPHITE_UNROLL_AND_JAM_KERNEL := $(filter 5.1% 5.2% 6.0%,$(SM_KERNEL_NAME))
 
-        # Write version info to build.prop
-        PRODUCT_PROPERTY_OVERRIDES += \
-          ro.sm.android=$(SM_AND_VERSION)
-
-        # Graphite ROM flags
-        OPT1 := [graphite]
-
-        # Some graphite flags are only available for certain gcc versions
- export GRAPHITE_UNROLL_AND_JAM_AND := $(filter 5.1% 6.0%,$(SM_AND_NAME))
-
-        # Graphite flags and friends
-        BASE_GRAPHITE_FLAGS := \
-          -fgraphite \
-          -fgraphite-identity \
-          -floop-flatten \
-          -ftree-loop-linear \
-          -floop-interchange \
-          -floop-strip-mine \
-          -floop-block
-        ifneq ($(GRAPHITE_UNROLL_AND_JAM_AND),)
-          BASE_GRAPHITE_FLAGS += \
-            -floop-unroll-and-jam
-        endif
-
-        # Check if there's already something set somewhere.
-        ifndef GRAPHITE_FLAGS
-          GRAPHITE_FLAGS := \
-            $(BASE_GRAPHITE_FLAGS)
-        else
-          GRAPHITE_FLAGS += \
-            $(BASE_GRAPHITE_FLAGS)
-        endif
-
-        # Legacy gcc doesn't understand this flag
-        ifneq ($(strip $(USE_LEGACY_GCC)),true)
-          GRAPHITE_FLAGS += \
-            -Wno-error=maybe-uninitialized
-        endif
+      BASE_GRAPHITE_KERNEL_FLAGS := \
+        -fgraphite \
+        -fgraphite-identity \
+        -floop-flatten \
+        -ftree-loop-linear \
+        -floop-interchange \
+        -floop-strip-mine \
+        -floop-block \
+        -floop-nest-optimize
+      ifneq ($(GRAPHITE_UNROLL_AND_JAM_KERNEL),)
+        BASE_GRAPHITE_KERNEL_FLAGS += \
+          -floop-unroll-and-jam
       endif
-    
-      # Path to kernel toolchain
-      SM_KERNEL_PATH := prebuilts/gcc/$(HOST_PREBUILT_TAG)/aarch64/aarch64-$(TARGET_SM_KERNEL)
-      SM_KERNEL := $(shell $(SM_KERNEL_PATH)/bin/aarch64-gcc --version)
 
-      ifneq ($(filter %sabermod,$(SM_KERNEL)),)
- export SM_KERNEL_NAME := $(filter %sabermod,$(SM_KERNEL))
-        SM_KERNEL_DATE := $(filter 20140% 20141% 20150% 20151%,$(SM_KERNEL))
-        SM_KERNEL_STATUS := $(filter (release) (prerelease) (experimental),$(SM_KERNEL))
-        SM_KERNEL_VERSION := $(SM_KERNEL_NAME)-$(SM_KERNEL_DATE)-$(SM_KERNEL_STATUS)
+      # Check if there's already something set somewhere.
+      ifndef GRAPHITE_KERNEL_FLAGS
+ export GRAPHITE_KERNEL_FLAGS := \
+          $(BASE_GRAPHITE_KERNEL_FLAGS)
+      else
+ export GRAPHITE_KERNEL_FLAGS := \
+          $(BASE_GRAPHITE_KERNEL_FLAGS) \
+          $(GRAPHITE_KERNEL_FLAGS)
+      endif
 
-        # Graphite flags for kernel
+      ifneq ($(filter 5.1% 5.2% 6.0%,$(SM_KERNEL_NAME)),)
 
-        # Some graphite flags are only available for certain gcc versions
- export GRAPHITE_UNROLL_AND_JAM_KERNEL := $(filter 5.1% 6.0%,$(SM_KERNEL_NAME))
+        # Flags to disable graphite in the kernel for gcc 5/6
+ export LOCAL_DISABLE_KERNEL_GRAPHITE := \
+          -fno-graphite \
+          -fno-graphite-identity \
+          -fno-loop-flatten \
+          -fno-tree-loop-linear \
+          -fno-loop-interchange \
+          -fno-loop-strip-mine \
+          -fno-loop-block \
+          -fno-loop-nest-optimize \
+          -fno-loop-unroll-and-jam \
+          -fno-loop-parallelize-all \
+          -ftree-parallelize-loops=0 \
+          -fno-openmp
+      endif
 
-        BASE_GRAPHITE_KERNEL_FLAGS := \
-          -fgraphite \
-          -fgraphite-identity \
-          -floop-flatten \
-          -ftree-loop-linear \
-          -floop-interchange \
-          -floop-strip-mine \
-          -floop-block \
-          -floop-nest-optimize
-        ifneq ($(GRAPHITE_UNROLL_AND_JAM_KERNEL),)
-          BASE_GRAPHITE_KERNEL_FLAGS += \
-            -floop-unroll-and-jam
-        endif
-
-        # Check if there's already something set somewhere.
-        ifndef GRAPHITE_KERNEL_FLAGS
-   export GRAPHITE_KERNEL_FLAGS := \
-            $(BASE_GRAPHITE_KERNEL_FLAGS)
-        else
-   export GRAPHITE_KERNEL_FLAGS := \
-            $(BASE_GRAPHITE_KERNEL_FLAGS) \
-            $(GRAPHITE_KERNEL_FLAGS)
-        endif
-
-        ifneq ($(filter 5.1% 6.0%,$(SM_KERNEL_NAME)),)
-          # Flags to disable graphite in the kernel for gcc 5/6
-   export LOCAL_DISABLE_KERNEL_GRAPHITE := \
-            -fno-graphite \
-            -fno-graphite-identity \
-            -fno-loop-flatten \
-            -fno-tree-loop-linear \
-            -fno-loop-interchange \
-            -fno-loop-strip-mine \
-            -fno-loop-block \
-            -fno-loop-nest-optimize \
-            -fno-loop-unroll-and-jam \
-            -fno-loop-parallelize-all \
-            -ftree-parallelize-loops=0 \
-            -fno-openmp
-        endif
-
-        ifeq ($(strip $(LOCAL_STRICT_ALIASING)),true)
+      ifeq ($(strip $(LOCAL_STRICT_ALIASING)),true)
 
         # strict-aliasing kernel flags
  export KERNEL_STRICT_FLAGS := \
           -fstrict-aliasing \
           -Werror=strict-aliasing
-        endif
       endif
     endif
-    ifdef TARGET_ARCH_LIB_PATH
-
-      # Add extra libs for the compilers to use
-export LD_LIBRARY_PATH := $(TARGET_ARCH_LIB_PATH):$(LD_LIBRARY_PATH)
-export LIBRARY_PATH := $(TARGET_ARCH_LIB_PATH):$(LIBRARY_PATH)
+    ifeq ($(strip $(ENABLE_GCC_DEFAULTS)),true)
+      export ENABLE_GCC_DEFAULTS := true
+      USE_GCC_DEFAULTS := -march=armv7-a -mtune=cortex-a15
     endif
+  endif
 
-    ifneq ($(GRAPHITE_FLAGS),)
+  ifeq ($(strip $(LOCAL_ARCH)),arm64)
 
-      # Force disable some modules that are not compatible with graphite flags.
-      # Add more modules if needed for devices in device/sm_device.mk or by ROM in product/rom_product.mk with
-      # LOCAL_DISABLE_GRAPHITE:=
+export TARGET_ARCH_LIB_PATH := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/aarch64/aarch64-$(HOST_OS)-android-$(TARGET_SM_AND)/lib:$(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/aarch64/aarch64-$(TARGET_SM_KERNEL)/lib
 
-      ifneq ($(filter 4.8% 4.9%,$(SM_AND_NAME)),)
-        LOCAL_BASE_DISABLE_GRAPHITE := \
-          libunwind \
-          libFFTEm \
-          libicui18n \
-          libskia \
-          libvpx \
-          libmedia_jni \
-          libstagefright_mp3dec \
-          libart \
-          mdnsd \
-          libwebrtc_spl \
-          third_party_WebKit_Source_core_webcore_svg_gyp \
-          libjni_filtershow_filters \
-          libavformat \
-          libavcodec \
-          skia_skia_library_gyp \
-          libSR_Core \
-          third_party_libvpx_libvpx_gyp \
-          ui_gl_gl_gyp \
-          fio \
-          libpdfiumcore \
-          libFraunhoferAAC
-      endif
+    # Path to toolchain
+    SM_AND_PATH := prebuilts/gcc/$(HOST_PREBUILT_TAG)/aarch64/aarch64-$(HOST_OS)-android-$(TARGET_SM_AND)
+    SM_AND := $(shell $(SM_AND_PATH)/bin/aarch64-$(HOST_OS)-android-gcc --version)
 
-      ifneq ($(filter 5.1% 6.0%,$(SM_AND_NAME)),)
-        LOCAL_BASE_DISABLE_GRAPHITE := \
-          libjavacore \
-          libc_bionic \
-          libnetutils \
-          libandroid_runtime \
-          libpdfiumcore \
-          libicui18n \
-          libicuuc \
-          libhwui \
-          libskia \
-          dhcpcd \
-          libpac \
-          libRS \
-          clatd \
-          libsoftkeymaster \
-          libstagefright_avc_common \
-          libstagefright_color_conversion \
-          libstagefright_matroska \
-          libwebm \
-          libstagefright_amrnb_common \
-          libart \
-          libart-compiler \
-          libjavacrypto \
-          libstagefright_omx \
-          libstagefright_amrnbdec \
-          librtp_jni \
-          libstagefright_amrnbenc \
-          libFraunhoferAAC \
-          audio.r_submix.default \
-          liboverlay \
-          libmedia_jni \
-          libstagefright_amrwbdec \
-          libstagefright_avcenc \
-          libstagefright_mp3dec \
-          libstagefright_m4vh263dec \
-          libstagefright_m4vh263enc \
-          libwebrtc_apm
+    # Find strings in version info
+    ifneq ($(filter %sabermod,$(SM_AND)),)
+      SM_AND_NAME := $(filter %sabermod,$(SM_AND))
+      SM_AND_DATE := $(filter 20140% 20141% 20150% 20151%,$(SM_AND))
+      SM_AND_STATUS := $(filter (release) (prerelease) (experimental),$(SM_AND))
+      SM_AND_VERSION := $(SM_AND_NAME)-$(SM_AND_DATE)-$(SM_AND_STATUS)
+
+      # Write version info to build.prop
+      PRODUCT_PROPERTY_OVERRIDES += \
+        ro.sm.android=$(SM_AND_VERSION)
+
+      # Graphite ROM flags
+      OPT1 := [graphite]
+
+      # Some graphite flags are only available for certain gcc versions
+export GRAPHITE_UNROLL_AND_JAM_AND := $(filter 5.1% 5.2% 6.0%,$(SM_AND_NAME))
+
+      # Graphite flags and friends
+      BASE_GRAPHITE_FLAGS := \
+        -fgraphite \
+        -fgraphite-identity \
+        -floop-flatten \
+        -ftree-loop-linear \
+        -floop-interchange \
+        -floop-strip-mine \
+        -floop-block
+      ifneq ($(GRAPHITE_UNROLL_AND_JAM_AND),)
+        BASE_GRAPHITE_FLAGS += \
+          -floop-unroll-and-jam
       endif
 
       # Check if there's already something set somewhere.
-      ifndef LOCAL_DISABLE_GRAPHITE
-        LOCAL_DISABLE_GRAPHITE := \
-          $(LOCAL_BASE_DISABLE_GRAPHITE)
+      ifndef GRAPHITE_FLAGS
+        GRAPHITE_FLAGS := \
+          $(BASE_GRAPHITE_FLAGS)
       else
-        LOCAL_DISABLE_GRAPHITE += \
-          $(LOCAL_BASE_DISABLE_GRAPHITE)
+        GRAPHITE_FLAGS += \
+          $(BASE_GRAPHITE_FLAGS)
+      endif
+
+      # Legacy gcc doesn't understand this flag
+      ifneq ($(strip $(USE_LEGACY_GCC)),true)
+        GRAPHITE_FLAGS += \
+          -Wno-error=maybe-uninitialized
       endif
     endif
-    # GCC 5/6 variables.
-    ifneq ($(filter 5.1% 6.0%,$(SM_KERNEL_NAME)),)
-      WARN_NO_ERROR := \
-        base_base_gyp
+  
+    # Path to kernel toolchain
+    SM_KERNEL_PATH := prebuilts/gcc/$(HOST_PREBUILT_TAG)/aarch64/aarch64-$(TARGET_SM_KERNEL)
+    SM_KERNEL := $(shell $(SM_KERNEL_PATH)/bin/aarch64-gcc --version)
+
+    ifneq ($(filter %sabermod,$(SM_KERNEL)),)
+export SM_KERNEL_NAME := $(filter %sabermod,$(SM_KERNEL))
+      SM_KERNEL_DATE := $(filter 20140% 20141% 20150% 20151%,$(SM_KERNEL))
+      SM_KERNEL_STATUS := $(filter (release) (prerelease) (experimental),$(SM_KERNEL))
+      SM_KERNEL_VERSION := $(SM_KERNEL_NAME)-$(SM_KERNEL_DATE)-$(SM_KERNEL_STATUS)
+
+      # Graphite flags for kernel
+
+      # Some graphite flags are only available for certain gcc versions
+export GRAPHITE_UNROLL_AND_JAM_KERNEL := $(filter 5.1% 5.2% 6.0%,$(SM_KERNEL_NAME))
+
+      BASE_GRAPHITE_KERNEL_FLAGS := \
+        -fgraphite \
+        -fgraphite-identity \
+        -floop-flatten \
+        -ftree-loop-linear \
+        -floop-interchange \
+        -floop-strip-mine \
+        -floop-block \
+        -floop-nest-optimize
+      ifneq ($(GRAPHITE_UNROLL_AND_JAM_KERNEL),)
+        BASE_GRAPHITE_KERNEL_FLAGS += \
+          -floop-unroll-and-jam
+      endif
+
+      # Check if there's already something set somewhere.
+      ifndef GRAPHITE_KERNEL_FLAGS
+ export GRAPHITE_KERNEL_FLAGS := \
+          $(BASE_GRAPHITE_KERNEL_FLAGS)
+      else
+ export GRAPHITE_KERNEL_FLAGS := \
+          $(BASE_GRAPHITE_KERNEL_FLAGS) \
+          $(GRAPHITE_KERNEL_FLAGS)
+      endif
+
+      ifneq ($(filter 5.1% 5.2% 6.0%,$(SM_KERNEL_NAME)),)
+        # Flags to disable graphite in the kernel for gcc 5/6
+ export LOCAL_DISABLE_KERNEL_GRAPHITE := \
+          -fno-graphite \
+          -fno-graphite-identity \
+          -fno-loop-flatten \
+          -fno-tree-loop-linear \
+          -fno-loop-interchange \
+          -fno-loop-strip-mine \
+          -fno-loop-block \
+          -fno-loop-nest-optimize \
+          -fno-loop-unroll-and-jam \
+          -fno-loop-parallelize-all \
+          -ftree-parallelize-loops=0 \
+          -fno-openmp
+      endif
+
+      ifeq ($(strip $(LOCAL_STRICT_ALIASING)),true)
+
+      # strict-aliasing kernel flags
+export KERNEL_STRICT_FLAGS := \
+        -fstrict-aliasing \
+        -Werror=strict-aliasing
+      endif
     endif
   endif
-else
-    $(warning ========================================================================)
-    $(warning   Limited optimization options are available outside of linux host OS.)
-    $(warning   To take advantage of all optimization options, build on linux host OS.)
-    $(warning ========================================================================)
+  ifdef TARGET_ARCH_LIB_PATH
+
+    # Add extra libs for the compilers to use
+export LD_LIBRARY_PATH := $(TARGET_ARCH_LIB_PATH):$(LD_LIBRARY_PATH)
+export LIBRARY_PATH := $(TARGET_ARCH_LIB_PATH):$(LIBRARY_PATH)
+  endif
+
+  ifneq ($(GRAPHITE_FLAGS),)
+
+    # Force disable some modules that are not compatible with graphite flags.
+    # Add more modules if needed for devices in device/sm_device.mk or by ROM in product/rom_product.mk with
+    # LOCAL_DISABLE_GRAPHITE:=
+
+    ifneq ($(filter 4.8% 4.9%,$(SM_AND_NAME)),)
+      LOCAL_BASE_DISABLE_GRAPHITE := \
+        libunwind \
+        libFFTEm \
+        libicui18n \
+        libskia \
+        libvpx \
+        libmedia_jni \
+        libstagefright_mp3dec \
+        libart \
+        mdnsd \
+        libwebrtc_spl \
+        third_party_WebKit_Source_core_webcore_svg_gyp \
+        libjni_filtershow_filters \
+        libavformat \
+        libavcodec \
+        skia_skia_library_gyp \
+        libSR_Core \
+        third_party_libvpx_libvpx_gyp \
+        ui_gl_gl_gyp \
+        fio \
+        libpdfiumcore \
+        libFraunhoferAAC
+    endif
+
+    ifneq ($(filter 5.1% 5.2% 6.0%,$(SM_AND_NAME)),)
+      LOCAL_BASE_DISABLE_GRAPHITE := \
+        libjavacore \
+        libc_bionic \
+        libnetutils \
+        libandroid_runtime \
+        libpdfiumcore \
+        libicui18n \
+        libicuuc \
+        libhwui \
+        libskia \
+        dhcpcd \
+        libpac \
+        libRS \
+        clatd \
+        libsoftkeymaster \
+        libstagefright_avc_common \
+        libstagefright_color_conversion \
+        libstagefright_matroska \
+        libwebm \
+        libstagefright_amrnb_common \
+        libart \
+        libart-compiler \
+        libjavacrypto \
+        libstagefright_omx \
+        libstagefright_amrnbdec \
+        librtp_jni \
+        libstagefright_amrnbenc \
+        libFraunhoferAAC \
+        audio.r_submix.default \
+        liboverlay \
+        libmedia_jni \
+        libstagefright_amrwbdec \
+        libstagefright_avcenc \
+        libstagefright_mp3dec \
+        libstagefright_m4vh263dec \
+        libstagefright_m4vh263enc \
+        libwebrtc_apm
+    endif
+
+    # Check if there's already something set somewhere.
+    ifndef LOCAL_DISABLE_GRAPHITE
+      LOCAL_DISABLE_GRAPHITE := \
+        $(LOCAL_BASE_DISABLE_GRAPHITE)
+    else
+      LOCAL_DISABLE_GRAPHITE += \
+        $(LOCAL_BASE_DISABLE_GRAPHITE)
+    endif
+  endif
+
+  # GCC 5/6 variables.
+  ifneq ($(filter 5.1% 5.2% 6.0%,$(SM_KERNEL_NAME)),)
+    WARN_NO_ERROR := \
+      base_base_gyp
+  endif
 endif
 
 # strict-aliasing
@@ -632,6 +622,7 @@ ifeq ($(strip $(ENABLE_SABERMOD_ARM_MODE)),true)
     libscrypt_static \
     libRSCpuRef \
     libRSDriver \
+    mdnsd \
     $(LOCAL_BLUETOOTH_BLUEDROID)
 
   LOCAL_ARM64_COMPILERS_WHITELIST_BASE := \
@@ -645,6 +636,7 @@ ifeq ($(strip $(ENABLE_SABERMOD_ARM_MODE)),true)
     netd \
     libRSDriver \
     libjpeg \
+    mdnsd \
     $(LOCAL_BLUETOOTH_BLUEDROID)
 
   # Check if there's already something set somewhere.
@@ -677,7 +669,7 @@ else
 endif
 
 # Enable some basic host gcc optimizations
-# None that are cpu specific but arch is ok. It's already known that we are on linux-x86.
+# None that are cpu specific but arch is ok.
 EXTRA_SABERMOD_HOST_GCC := \
   -ftree-vectorize
 

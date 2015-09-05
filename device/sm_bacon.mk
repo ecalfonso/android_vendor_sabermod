@@ -13,26 +13,15 @@
 # limitations under the License.
 #
 
-# Find host os
-UNAME := $(shell uname -s)
+# Sabermod configs
+TARGET_SM_KERNEL := 5.2
+BACON_THREADS := 4
+PRODUCT_THREADS := $(BACON_THREADS)
+LOCAL_STRICT_ALIASING := false
+export LOCAL_O3 := true
 
-ifeq ($(strip $(UNAME)),Linux)
-  HOST_OS := linux
-endif
-
-# Only use these compilers on linux host.
-ifeq ($(strip $(HOST_OS)),linux)
-
-  # Sabermod configs
-  TARGET_SM_KERNEL := 5.2
-  BACON_THREADS := 4
-  PRODUCT_THREADS := $(BACON_THREADS)
-  LOCAL_STRICT_ALIASING := false
-  export LOCAL_O3 := true
-
-  GRAPHITE_KERNEL_FLAGS := \
-    -fopenmp
-endif
+GRAPHITE_KERNEL_FLAGS := \
+  -fopenmp
 
 # General flags for gcc 4.9 to allow compilation to complete.
 MAYBE_UNINITIALIZED := \
@@ -41,19 +30,3 @@ MAYBE_UNINITIALIZED := \
 # Extra SaberMod GCC C flags for arch target and Kernel
 EXTRA_SABERMOD_GCC_VECTORIZE := \
   -mvectorize-with-neon-quad
-
-ifeq ($(strip $(LOCAL_STRICT_ALIASING)),true)
-
-  # Enable strict-aliasing kernel flags
-  export CONFIG_MACH_MSM8974_HAMMERHEAD_STRICT_ALIASING := y
-
-  # Check if something is already set in product/sm_products.mk
-  ifndef LOCAL_DISABLE_STRICT_ALIASING
-    LOCAL_DISABLE_STRICT_ALIASING := \
-      libmmcamera_interface\
-  else
-    LOCAL_DISABLE_STRICT_ALIASING += \
-      libmmcamera_interface\
-  endif
-endif
-endif

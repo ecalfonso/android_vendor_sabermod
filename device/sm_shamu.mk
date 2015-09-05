@@ -13,28 +13,17 @@
 # limitations under the License.
 #
 
-# Find host os
-UNAME := $(shell uname -s)
-
-ifeq ($(strip $(UNAME)),Linux)
-  HOST_OS := linux
-endif
-
-# Only use these compilers on linux host.
-ifeq ($(strip $(HOST_OS)),linux)
-
-  # Sabermod configs
-  TARGET_SM_KERNEL := 5.2
-  SHAMU_THREADS := 4
-  PRODUCT_THREADS := $(SHAMU_THREADS)
-  ENABLE_STRICT_ALIASING := false
-  LOCAL_O3 := true
+# Sabermod configs
+TARGET_SM_KERNEL := 4.9
+SHAMU_THREADS := 4
+PRODUCT_THREADS := $(SHAMU_THREADS)
+ENABLE_STRICT_ALIASING := false
+LOCAL_O3 := true
 
 GRAPHITE_KERNEL_FLAGS := \
-    -floop-parallelize-all \
-    -ftree-parallelize-loops=$(PRODUCT_THREADS) \
-    -fopenmp
-endif
+  -floop-parallelize-all \
+  -ftree-parallelize-loops=$(PRODUCT_THREADS) \
+  -fopenmp
 
 # Extra SaberMod GCC C flags for arch target and Kernel
 EXTRA_SABERMOD_GCC_VECTORIZE := \
@@ -53,4 +42,3 @@ ifeq ($(strip $(LOCAL_STRICT_ALIASING)),true)
       camera.msm8084
   endif
 endif
-
