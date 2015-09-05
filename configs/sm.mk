@@ -570,7 +570,10 @@ ifeq ($(strip $(LOCAL_O3)),true)
     -O3 \
     -fno-inline-functions \
     -Wno-error=array-bounds \
-    -Wno-error=strict-overflow
+    -Wno-error=strict-overflow \
+    -fwrapv \
+    -funroll-loops \
+    -mvectorize-with-neon-quad
 else
     OPT2:=
 endif
