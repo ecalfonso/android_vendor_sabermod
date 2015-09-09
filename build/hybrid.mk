@@ -29,6 +29,11 @@ ifeq ($(strip $(TARGET_ARCH)),arm)
         ifeq (1,$(words $(filter $(GCC_4_9_MODULES), $(LOCAL_MODULE))))
           LOCAL_CC := prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-$(HOST_OS)-androideabi-4.9/bin/arm-$(HOST_OS)-androideabi-gcc$(HOST_EXECUTABLE_SUFFIX)
           LOCAL_CXX := prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-$(HOST_OS)-androideabi-4.9/bin/arm-$(HOST_OS)-androideabi-g++
+        else
+          ifeq (true,$(strip $(GRAPHITE_IS_ENABLED)))
+            LOCAL_CFLAGS += -floop-unroll-and-jam
+            LOCAL_LDFLAGS += -floop-unroll-and-jam
+          endif
         endif
       endif
     endif

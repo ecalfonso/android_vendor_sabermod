@@ -59,7 +59,12 @@ ifeq (,$(filter true,$(LOCAL_IS_HOST_MODULE) $(LOCAL_CLANG)))
     else
       LOCAL_LDFLAGS := $(GRAPHITE_FLAGS)
     endif
+    GRAPHITE_IS_ENABLED := true
+  else
+    GRAPHITE_IS_ENABLED := false
   endif
+else
+  GRAPHITE_IS_ENABLED := false
 endif
 
 # General flags for gcc 4.9+ to allow compilation to complete.

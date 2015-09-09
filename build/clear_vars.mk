@@ -18,4 +18,4 @@
 
 $(shell unset LOCAL_TMP_ARM_MODE)
 $(shell unset LOCAL_TMP_ARCH)
-
+$(shell unset GRAPHITE_IS_ENABLED)
