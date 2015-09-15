@@ -37,10 +37,10 @@ ifeq ($(strip $(TARGET_SM_AND)),4.9)
 
 endif
 
-ifneq ($(filter 5.1 5.2 6.0,$(TARGET_SM_KERNEL)),)
-  GRAPHITE_KERNEL_FLAGS := \
-    -fopenmp
-endif
+GRAPHITE_KERNEL_FLAGS := \
+  -floop-parallelize-all \
+  -ftree-parallelize-loops=$(PRODUCT_THREADS) \
+  -fopenmp
 
 # Extra SaberMod GCC C flags for arch target and Kernel
 export EXTRA_SABERMOD_GCC_VECTORIZE := \
