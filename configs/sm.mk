@@ -83,7 +83,7 @@ FORCE_DISABLE_DEBUGGING := true
 ifneq ($(filter arm arm64,$(LOCAL_ARCH)),)
   ifeq ($(strip $(LOCAL_ARCH)),arm)
 
-export TARGET_ARCH_LIB_PATH := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-$(HOST_OS)-androideabi-$(TARGET_SM_AND)/lib:$(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-eabi-$(TARGET_SM_KERNEL)/lib
+export TARGET_ARCH_LIB_PATH := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-$(HOST_OS)-androideabi-$(TARGET_SM_AND)/lib
 
     # Path to ROM toolchain
     SM_AND_PATH := prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-$(HOST_OS)-androideabi-$(TARGET_SM_AND)
@@ -155,8 +155,7 @@ export GRAPHITE_UNROLL_AND_JAM_KERNEL := $(filter 5.% 6.%,$(SM_KERNEL_NAME))
         -ftree-loop-linear \
         -floop-interchange \
         -floop-strip-mine \
-        -floop-block \
-        -floop-nest-optimize
+        -floop-block
       ifneq ($(GRAPHITE_UNROLL_AND_JAM_KERNEL),)
         BASE_GRAPHITE_KERNEL_FLAGS += \
           -floop-unroll-and-jam
@@ -197,10 +196,23 @@ export GRAPHITE_UNROLL_AND_JAM_KERNEL := $(filter 5.% 6.%,$(SM_KERNEL_NAME))
           -fstrict-aliasing \
           -Werror=strict-aliasing
       endif
+ export TARGET_ARCH_LIB_PATH := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-eabi-$(TARGET_SM_KERNEL)/lib:$(TARGET_ARCH_LIB_PATH)
     endif
     ifeq ($(strip $(ENABLE_GCC_DEFAULTS)),true)
       export ENABLE_GCC_DEFAULTS := true
       USE_GCC_DEFAULTS := -march=armv7-a -mtune=cortex-a15
+      OPT8 := [gcc-defaults]
+    else
+      # Disable Certain modules for CPU Tuning.
+      LOCAL_DISABLE_TUNE := \
+	libc_dns \
+	libc_tzcode \
+	bluetooth.default \
+	libwebviewchromium \
+	libwebviewchromium_loader \
+	libwebviewchromium_plat_support \
+	$(LOCAL_BLUETOOTH_BLUEDROID)
+      OPT8 := [cpu-tune]
     endif
 
     # GCC hybrid mode.
@@ -235,7 +247,7 @@ export GRAPHITE_UNROLL_AND_JAM_KERNEL := $(filter 5.% 6.%,$(SM_KERNEL_NAME))
 
   ifeq ($(strip $(LOCAL_ARCH)),arm64)
 
-export TARGET_ARCH_LIB_PATH := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/aarch64/aarch64-$(HOST_OS)-android-$(TARGET_SM_AND)/lib:$(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/aarch64/aarch64-$(TARGET_SM_KERNEL)/lib
+export TARGET_ARCH_LIB_PATH := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/aarch64/aarch64-$(HOST_OS)-android-$(TARGET_SM_AND)/lib
 
     # Path to toolchain
     SM_AND_PATH := prebuilts/gcc/$(HOST_PREBUILT_TAG)/aarch64/aarch64-$(HOST_OS)-android-$(TARGET_SM_AND)
@@ -306,8 +318,7 @@ export GRAPHITE_UNROLL_AND_JAM_KERNEL := $(filter 5.% 6.%,$(SM_KERNEL_NAME))
         -ftree-loop-linear \
         -floop-interchange \
         -floop-strip-mine \
-        -floop-block \
-        -floop-nest-optimize
+        -floop-block
       ifneq ($(GRAPHITE_UNROLL_AND_JAM_KERNEL),)
         BASE_GRAPHITE_KERNEL_FLAGS += \
           -floop-unroll-and-jam
@@ -348,6 +359,7 @@ export KERNEL_STRICT_FLAGS := \
         -Werror=strict-aliasing
       endif
     endif
+export TARGET_ARCH_LIB_PATH := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/aarch64/aarch64-$(TARGET_SM_KERNEL)/lib:$(TARGET_ARCH_LIB_PATH)
   endif
   ifdef TARGET_ARCH_LIB_PATH
 
@@ -384,7 +396,9 @@ export LIBRARY_PATH := $(TARGET_ARCH_LIB_PATH):$(LIBRARY_PATH)
         ui_gl_gl_gyp \
         fio \
         libpdfiumcore \
-        libFraunhoferAAC
+        libFraunhoferAAC \
+        libinput \
+        libmedia
     endif
 
     ifneq ($(filter 5.% 6.%,$(SM_AND_NAME)),)
@@ -558,6 +572,9 @@ LOCAL_BLUETOOTH_BLUEDROID := \
 # O3 optimizations
 ifeq ($(strip $(LOCAL_O3)),true)
 
+  # Export to the kernel
+export LOCAL_O3 := true
+
   # If -O3 is enabled, force disable on thumb flags.
   # loop optmizations are not really usefull in thumb mode.
   LOCAL_DISABLE_O3_THUMB := true
@@ -590,6 +607,12 @@ ifeq ($(strip $(LOCAL_O3)),true)
     -funroll-loops
 else
     OPT2:=
+endif
+
+ifeq (true,$(strip $(DISABLE_O3_KERNEL)))
+
+  # Export to the kernel
+export DISABLE_O3_KERNEL := true
 endif
 
 # Extra SaberMod GCC loop flags.
@@ -720,7 +743,7 @@ OPT6 := [mem-sanitizer]
 OPT7 := [OpenMP]
 
 # Right all optimization level options to build.prop
-GCC_OPTIMIZATION_LEVELS := $(OPT1)$(OPT2)$(OPT4)$(OPT3)$(OPT6)$(OPT7)$(OPT5)
+GCC_OPTIMIZATION_LEVELS := $(OPT1)$(OPT2)$(OPT4)$(OPT3)$(OPT6)$(OPT7)$(OPT8)$(OPT5)
 ifneq ($(GCC_OPTIMIZATION_LEVELS),)
   PRODUCT_PROPERTY_OVERRIDES += \
     ro.sm.flags="$(GCC_OPTIMIZATION_LEVELS)"

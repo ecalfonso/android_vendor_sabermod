@@ -14,11 +14,11 @@
 #
 
 # Sabermod configs
-TARGET_SM_KERNEL := 4.9
+TARGET_SM_KERNEL := 5.2
 HAMMERHEAD_THREADS := 4
 PRODUCT_THREADS := $(HAMMERHEAD_THREADS)
 LOCAL_STRICT_ALIASING := true
-export LOCAL_O3 := true
+LOCAL_O3 := true
 
 GRAPHITE_KERNEL_FLAGS := \
   -floop-parallelize-all \
@@ -46,11 +46,11 @@ export CONFIG_MACH_MSM8974_HAMMERHEAD_STRICT_ALIASING := y
   # Check if something is already set in product/sm_products.mk
   ifndef LOCAL_DISABLE_STRICT_ALIASING
     LOCAL_DISABLE_STRICT_ALIASING := \
-      libmmcamera_interface\
+      libmmcamera_interface \
       camera.hammerhead
   else
     LOCAL_DISABLE_STRICT_ALIASING += \
-      libmmcamera_interface\
+      libmmcamera_interface \
       camera.hammerhead
   endif
 endif

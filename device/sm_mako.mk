@@ -18,14 +18,12 @@ TARGET_SM_KERNEL := 4.8
 MAKO_THREADS := 4
 PRODUCT_THREADS := $(MAKO_THREADS)
 LOCAL_STRICT_ALIASING := true
-export LOCAL_O3 := true
+LOCAL_O3 := true
 
-ifneq ($(filter 5.1 5.2 6.0,$(TARGET_SM_KERNEL)),)
-  GRAPHITE_KERNEL_FLAGS := \
-    -floop-parallelize-all \
-    -ftree-parallelize-loops=$(PRODUCT_THREADS) \
-    -fopenmp
-endif
+GRAPHITE_KERNEL_FLAGS := \
+  -floop-parallelize-all \
+  -ftree-parallelize-loops=$(PRODUCT_THREADS) \
+  -fopenmp
 
 # Extra SaberMod GCC C flags for arch target and Kernel
 EXTRA_SABERMOD_GCC_VECTORIZE := \

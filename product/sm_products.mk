@@ -53,8 +53,6 @@ ifneq ($(filter slim% aicp% cm%,$(TARGET_PRODUCT)),)
   include $(SM_VENDOR)/product/cm_product.mk
 endif
 
-# Extra ROM packages
-
 # PA
 ifneq ($(filter pa%,$(TARGET_PRODUCT)),)
   NO_OTA_BUILD := true
