@@ -68,29 +68,6 @@ ifeq ($(strip $(LOCAL_ARCH)),arm)
   endif
 endif
 
-# Bluetooth modules
-LOCAL_BLUETOOTH_BLUEDROID := \
-  bluetooth.default \
-  libbt-brcm_stack \
-  audio.a2dp.default \
-  libbt-brcm_gki \
-  libbt-utils \
-  libbt-qcom_sbc_decoder \
-  libbt-brcm_bta \
-  bdt \
-  bdtest \
-  libbt-hci \
-  libosi \
-  ositests \
-  libbt-vendor \
-  libbluetooth_jni
-
-ifndef NO_OPTIMIZATIONS
-  NO_OPTIMIZATIONS := $(LOCAL_BLUETOOTH_BLUEDROID)
-else
-  NO_OPTIMIZATIONS += $(LOCAL_BLUETOOTH_BLUEDROID)
-endif
-
 ifeq ($(strip $(LOCAL_ARCH)),arm64)
 
   # Strict aliasing
@@ -256,7 +233,7 @@ export TARGET_ARCH_KERNEL_INC_PATH := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_
 	libwebviewchromium \
 	libwebviewchromium_loader \
 	libwebviewchromium_plat_support \
-	$(NO_OPTIMIZATIONS)
+	$(LOCAL_BLUETOOTH_BLUEDROID)
       OPT8 := [cpu-tune]
     endif
 
@@ -443,8 +420,7 @@ export LIBRARY_PATH := $(TARGET_ARCH_LIB_PATH):$(LIBRARY_PATH)
         libpdfiumcore \
         libFraunhoferAAC \
         libinput \
-        libmedia \
-	$(NO_OPTIMIZATIONS)
+        libmedia
     endif
 
     ifneq ($(filter 5.% 6.%,$(SM_AND_NAME)),)
@@ -485,8 +461,7 @@ export LIBRARY_PATH := $(TARGET_ARCH_LIB_PATH):$(LIBRARY_PATH)
         libstagefright_m4vh263dec \
         libstagefright_m4vh263enc \
         libwebrtc_apm \
-        busybox \
-	$(NO_OPTIMIZATIONS)
+        busybox
     endif
 
     # Check if there's already something set somewhere.
@@ -571,8 +546,7 @@ ifeq ($(strip $(LOCAL_STRICT_ALIASING)),true)
     libvisualizer \
     libandroidfw \
     libstlport_static \
-    tcpdump \
-    $(NO_OPTIMIZATIONS)
+    tcpdump
 
   # Check if there's already something somewhere.
   ifndef LOCAL_DISABLE_STRICT_ALIASING
@@ -601,6 +575,23 @@ else
     fastboot
 endif
 
+# Bluetooth modules
+LOCAL_BLUETOOTH_BLUEDROID := \
+  bluetooth.default \
+  libbt-brcm_stack \
+  audio.a2dp.default \
+  libbt-brcm_gki \
+  libbt-utils \
+  libbt-qcom_sbc_decoder \
+  libbt-brcm_bta \
+  bdt \
+  bdtest \
+  libbt-hci \
+  libosi \
+  ositests \
+  libbt-vendor \
+  libbluetooth_jni
+
 # O3 optimizations
 ifeq ($(strip $(LOCAL_O3)),true)
 
@@ -621,12 +612,12 @@ export LOCAL_O3 := true
     LOCAL_DISABLE_O3 := \
       libaudioflinger \
       skia_skia_library_gyp \
-      $(NO_OPTIMIZATIONS)
+      $(LOCAL_BLUETOOTH_BLUEDROID)
   else
     LOCAL_DISABLE_O3 += \
       libaudioflinger \
       skia_skia_library_gyp \
-      $(NO_OPTIMIZATIONS)
+      $(LOCAL_BLUETOOTH_BLUEDROID)
   endif
 
   # -O3 flags and friends
@@ -666,6 +657,8 @@ export EXTRA_SABERMOD_GCC_VECTORIZE := \
          -ftree-vectorize
 endif
 
+NO_OPTIMIZATIONS := $(LOCAL_BLUETOOTH_BLUEDROID)
+
 ifeq ($(strip $(ENABLE_SABERMOD_ARM_MODE)),true)
   # SABERMOD_ARM_MODE
   # The LOCAL_COMPILERS_WHITELIST will allow modules that absolutely have to be complied with thumb instructions,
@@ -684,7 +677,7 @@ ifeq ($(strip $(ENABLE_SABERMOD_ARM_MODE)),true)
     libRSCpuRef \
     libRSDriver \
     mdnsd \
-    $(NO_OPTIMIZATIONS)
+    $(LOCAL_BLUETOOTH_BLUEDROID)
 
   LOCAL_ARM64_COMPILERS_WHITELIST_BASE := \
     libc++abi \
@@ -698,7 +691,7 @@ ifeq ($(strip $(ENABLE_SABERMOD_ARM_MODE)),true)
     libRSDriver \
     libjpeg \
     mdnsd \
-    $(NO_OPTIMIZATIONS)
+    $(LOCAL_BLUETOOTH_BLUEDROID)
 
   # Check if there's already something set somewhere.
   ifndef LOCAL_ARM_COMPILERS_WHITELIST
@@ -742,16 +735,16 @@ EXTRA_SABERMOD_CLANG := \
 
 # Check if there's already something set somewhere.
 ifndef LOCAL_DISABLE_SABERMOD_GCC_VECTORIZE
-  LOCAL_DISABLE_SABERMOD_GCC_VECTORIZE := $(NO_OPTIMIZATIONS)
+  LOCAL_DISABLE_SABERMOD_GCC_VECTORIZE := $(LOCAL_BLUETOOTH_BLUEDROID)
 else
-  LOCAL_DISABLE_SABERMOD_GCC_VECTORIZE += $(NO_OPTIMIZATIONS)
+  LOCAL_DISABLE_SABERMOD_GCC_VECTORIZE += $(LOCAL_BLUETOOTH_BLUEDROID)
 endif
 
 # Check if there's already something set somewhere.
 ifndef LOCAL_DISABLE_SABERMOD_CLANG_VECTORIZE
-  LOCAL_DISABLE_SABERMOD_CLANG_VECTORIZE := $(NO_OPTIMIZATIONS)
+  LOCAL_DISABLE_SABERMOD_CLANG_VECTORIZE := $(LOCAL_BLUETOOTH_BLUEDROID)
 else
-  LOCAL_DISABLE_SABERMOD_CLANG_VECTORIZE += $(NO_OPTIMIZATIONS)
+  LOCAL_DISABLE_SABERMOD_CLANG_VECTORIZE += $(LOCAL_BLUETOOTH_BLUEDROID)
 endif
 
 # Some flags are only available for certain gcc versions
