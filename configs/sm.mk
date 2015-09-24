@@ -244,7 +244,11 @@ export TARGET_ARCH_KERNEL_INC_PATH := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_
     endif
 
     # GCC Defaults or CPU Tuning.
-    ifneq ($(ENABLE_GCC_DEFAULTS),true)
+    ifeq ($(strip $(ENABLE_GCC_DEFAULTS)),true)
+      export ENABLE_GCC_DEFAULTS := true
+      USE_GCC_DEFAULTS := -march=armv7-a -mtune=cortex-a15
+      OPT8 := [gcc-defaults]
+    else
       LOCAL_DISABLE_TUNE := \
 	libc_dns \
 	libc_tzcode \
@@ -254,10 +258,6 @@ export TARGET_ARCH_KERNEL_INC_PATH := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_
 	libwebviewchromium_plat_support \
 	$(NO_OPTIMIZATIONS)
       OPT8 := [cpu-tune]
-    else
-      export ENABLE_GCC_DEFAULTS := true
-      USE_GCC_DEFAULTS := -march=armv7-a -mtune=cortex-a15
-      OPT8 := [gcc-defaults]
     endif
 
     # GCC hybrid mode.
