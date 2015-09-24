@@ -96,15 +96,11 @@ ifneq ($(filter arm arm64,$(LOCAL_ARCH)),)
       endif
     endif
 
-ifeq (,$(filter 5.% 6.%,$(TARGET_SM_AND)))
+    ifeq (,$(filter 5.% 6.%,$(TARGET_SM_AND)))
 export TARGET_ARCH_LIB_PATH := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-linux-androideabi-$(TARGET_SM_AND)/lib
-export TARGET_ARCH_INC_PATH := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-linux-androideabi-$(TARGET_SM_AND)/include
-else
-export TARGET_ARCH_LIB_PATH := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-linux-androideabi-$(TARGET_SM_AND)/lib
-export TARGET_ARCH_SECOND_LIB_PATH := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-linux-androideabi-$(TARGET_SECOND_SM_AND)/lib
-export TARGET_ARCH_INC_PATH := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-linux-androideabi-$(TARGET_SM_AND)/include
-export TARGET_ARCH_SECOND_INC_PATH := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-linux-androideabi-$(TARGET_SECOND_SM_AND)/include
-endif
+    else
+export TARGET_ARCH_LIB_PATH := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-linux-androideabi-$(TARGET_SM_AND)/lib:$(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-linux-androideabi-$(TARGET_SECOND_SM_AND)/lib
+    endif
 
     # Path to ROM toolchain
     SM_AND_PATH := prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-linux-androideabi-$(TARGET_SM_AND)
@@ -217,6 +213,7 @@ export GRAPHITE_UNROLL_AND_JAM_KERNEL := $(filter 5.% 6.%,$(SM_KERNEL_NAME))
           -fstrict-aliasing \
           -Werror=strict-aliasing
       endif
+ export TARGET_ARCH_LIB_PATH := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-eabi-$(TARGET_SM_KERNEL)/lib:$(TARGET_ARCH_LIB_PATH)
     endif
     ifeq ($(strip $(ENABLE_GCC_DEFAULTS)),true)
       export ENABLE_GCC_DEFAULTS := true
@@ -256,10 +253,7 @@ export GRAPHITE_UNROLL_AND_JAM_KERNEL := $(filter 5.% 6.%,$(SM_KERNEL_NAME))
         libaudioresampler \
         libart-disassembler \
         oatdump \
-        patchoat \
-        libwebviewchromium \
-        libwebviewchromium_plat_support \
-        libwebviewchromium_loader
+        patchoat
       ifndef GCC_4_9_MODULES
         GCC_4_9_MODULES := $(GCC_4_9_MODULES_BASE)
       else
