@@ -112,7 +112,7 @@ endif
 
     # Find strings in version info
     ifneq ($(filter %sabermod,$(SM_AND)),)
-export SM_AND_NAME := $(filter %sabermod,$(SM_AND))
+      SM_AND_NAME := $(filter %sabermod,$(SM_AND))
       SM_AND_DATE := $(filter 20140% 20141% 20150% 20151%,$(SM_AND))
       SM_AND_STATUS := $(filter (release) (prerelease) (experimental),$(SM_AND))
       SM_AND_VERSION := $(SM_AND_NAME)-$(SM_AND_DATE)-$(SM_AND_STATUS)
@@ -120,6 +120,7 @@ export SM_AND_NAME := $(filter %sabermod,$(SM_AND))
       # Write version info to build.prop
       PRODUCT_PROPERTY_OVERRIDES += \
         ro.sm.android=$(SM_AND_VERSION)
+
         
       # Graphite ROM flags
       OPT1 := [graphite]
@@ -216,16 +217,13 @@ export GRAPHITE_UNROLL_AND_JAM_KERNEL := $(filter 5.% 6.%,$(SM_KERNEL_NAME))
           -fstrict-aliasing \
           -Werror=strict-aliasing
       endif
-export TARGET_ARCH_KERNEL_LIB_PATH := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-eabi-$(TARGET_SM_KERNEL)/lib
-export TARGET_ARCH_KERNEL_INC_PATH := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-eabi-$(TARGET_SM_KERNEL)/include
     endif
-
-    # GCC Defaults or CPU Tuning.
     ifeq ($(strip $(ENABLE_GCC_DEFAULTS)),true)
       export ENABLE_GCC_DEFAULTS := true
       USE_GCC_DEFAULTS := -march=armv7-a -mtune=cortex-a15
       OPT8 := [gcc-defaults]
     else
+      # Disable Certain modules for CPU Tuning.
       LOCAL_DISABLE_TUNE := \
 	libc_dns \
 	libc_tzcode \
@@ -277,7 +275,7 @@ export TARGET_ARCH_LIB_PATH := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUIL
 
     # Find strings in version info
     ifneq ($(filter %sabermod,$(SM_AND)),)
-export SM_AND_NAME := $(filter %sabermod,$(SM_AND))
+      SM_AND_NAME := $(filter %sabermod,$(SM_AND))
       SM_AND_DATE := $(filter 20140% 20141% 20150% 20151%,$(SM_AND))
       SM_AND_STATUS := $(filter (release) (prerelease) (experimental),$(SM_AND))
       SM_AND_VERSION := $(SM_AND_NAME)-$(SM_AND_DATE)-$(SM_AND_STATUS)
