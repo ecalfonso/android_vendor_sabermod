@@ -21,6 +21,14 @@ ifneq ($(filter %mako,$(TARGET_PRODUCT)),)
   endif
 endif
 
+ifneq ($(filter %jflte,$(TARGET_PRODUCT)),)
+  KERNEL_DIR := kernel/samsung/jf
+  KERNEL_BINARY_IMAGE := zImage
+  ifneq ($(filter pa% slim%,$(TARGET_PRODUCT)),)
+    KERNEL_DEFCONFIG := cyanogen_jf_defconfig
+  endif
+endif
+
 ifneq ($(filter %shamu,$(TARGET_PRODUCT)),)
   KERNEL_DIR := kernel/moto/shamu
   KERNEL_BINARY_IMAGE := zImage-dtb
