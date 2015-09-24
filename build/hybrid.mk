@@ -17,8 +17,8 @@ ifeq ($(strip $(TARGET_ARCH)),arm)
   ifeq (,$(filter true,$(LOCAL_IS_HOST_MODULE) $(LOCAL_CLANG)))
     ifneq ($(filter 5.% 6.%,$(SM_AND_NAME)),)
       ifeq (1,$(words $(filter $(GCC_4_9_MODULES), $(LOCAL_MODULE))))
-        LOCAL_CC := prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-linux-androideabi-$(TARGET_SECOND_SM_AND)/bin/arm-linux-androideabi-gcc$(HOST_EXECUTABLE_SUFFIX)
-        LOCAL_CXX := prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-linux-androideabi-$(TARGET_SECOND_SM_AND)/bin/arm-linux-androideabi-g++
+        LOCAL_CC := prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-linux-androideabi-4.9/bin/arm-linux-androideabi-gcc$(HOST_EXECUTABLE_SUFFIX)
+        LOCAL_CXX := prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-linux-androideabi-4.9/bin/arm-linux-androideabi-g++
       else
         ifeq (true,$(strip $(GRAPHITE_IS_ENABLED)))
           LOCAL_CFLAGS += -floop-unroll-and-jam
