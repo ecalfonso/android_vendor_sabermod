@@ -627,6 +627,9 @@ export LOCAL_O3 := true
   # -O3 flags and friends
   O3_FLAGS := \
     -O3 \
+    -fmodulo-sched \
+    -fmodulo-sched-allow-regmoves \
+    -fno-inline-functions \
     -Wno-error=array-bounds \
     -Wno-error=strict-overflow
 else
