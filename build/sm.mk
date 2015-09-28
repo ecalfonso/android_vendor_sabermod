@@ -26,6 +26,9 @@ include $(SM_VENDOR)/build/strict.mk
 # CPU Tuning flags
 include $(SM_VENDOR)/build/tune.mk
 
+# Include loop optimizations
+include $(SM_VENDOR)/build/loop.mk
+
 # O3 optimzations
 ifeq ($(strip $(LOCAL_O3)),true)
   ifneq ($(strip $(LOCAL_ARM_MODE))-$(strip $(LOCAL_DISABLE_O3_THUMB)),thumb-true)
