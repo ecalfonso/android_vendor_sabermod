@@ -13,7 +13,8 @@
 # limitations under the License.
 
 LOCAL_DISABLE_MODULO := \
-	libvorbisidec
+	libvorbisidec \
+	v8_tools_gyp_v8_base_gyp
 
 MODULO_FLAGS := -fmodulo-sched -fmodulo-sched-allow-regmoves
 
