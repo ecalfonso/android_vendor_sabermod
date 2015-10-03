@@ -84,8 +84,6 @@ endif
 #
 #######################################################
 GRAPHITE_KERNEL_FLAGS := \
-	-floop-parallelize-all \
-	-ftree-parallelize-loops=$(PRODUCT_THREADS) \
 	-fopenmp
 
 #######################################################
