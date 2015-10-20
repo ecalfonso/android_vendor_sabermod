@@ -27,7 +27,7 @@ include $(SM_VENDOR)/build/strict.mk
 include $(SM_VENDOR)/build/tune.mk
 
 # Include loop optimizations
-include $(SM_VENDOR)/build/loop.mk
+# include $(SM_VENDOR)/build/loop.mk
 
 # O3 optimzations
 ifeq ($(strip $(LOCAL_O3)),true)
